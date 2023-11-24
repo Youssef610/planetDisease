@@ -1,8 +1,8 @@
-import cv2
 import tensorflow as tf
 from flask import Flask, request, jsonify
+from PIL import Image
 import numpy as np
-
+import io
 import base64
 
 # Load the model
@@ -53,16 +53,13 @@ def classify_image(image_data):
     # Decode the base64 encoded image data
     image_data = base64.b64decode(image_data)
 
-    # Create a NumPy array from the image data
-    image_np = np.frombuffer(image_data, dtype=np.uint8)
-
-    # Convert the NumPy array to an image
-    image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
+    # Create a PIL Image from the image data
+    image = Image.open(io.BytesIO(image_data))
 
     # Preprocess the image
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = cv2.resize(image, (256, 256))
-    image = image / 255.0
+    image = image.convert("RGB")
+    image = image.resize((256, 256))
+    image = np.array(image) / 255.0
 
     # Make the prediction
     predictions = model.predict(tf.convert_to_tensor([image]))
