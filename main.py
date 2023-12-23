@@ -82,5 +82,4 @@ def classify():
     # Return the classification result
     return jsonify({'predicted_class_label': predicted_class_label})
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+
